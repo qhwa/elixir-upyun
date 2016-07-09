@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :elixir_upyun, key: :value
+#     config :upyun, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:elixir_upyun, :key)
+#     Application.get_env(:upyun, :key)
 #
 # Or configure a 3rd-party app:
 #

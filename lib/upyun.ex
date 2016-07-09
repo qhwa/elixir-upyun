@@ -1,0 +1,2 @@
+defmodule Upyun do
+end
