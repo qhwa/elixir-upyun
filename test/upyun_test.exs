@@ -26,6 +26,11 @@ defmodule UpyunTest do
     }) == :ok
   end
 
+  test ".put with non-existing path" do
+    assert Upyun.put_body(policy, "hello", "/test/readme/README.md") == :ok
+    {:file, 5, _} = Upyun.info(policy, "/test/readme/README.md")
+  end
+
   test ".info" do
     assert Upyun.put_body(policy, "hello", "/README.md") == :ok
     {:file, 5, _} = Upyun.info(policy, "/README.md")
@@ -35,6 +40,7 @@ defmodule UpyunTest do
   test ".delete" do
     Upyun.delete(policy, "/README.md")
     Upyun.delete(policy, "/README2.md")
+    Upyun.delete(policy, "/test/readme/README.md")
   end
 
   defp policy do
