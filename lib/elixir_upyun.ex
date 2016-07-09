@@ -1,0 +1,2 @@
+defmodule ElixirUpyun do
+end
