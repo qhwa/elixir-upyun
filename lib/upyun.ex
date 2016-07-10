@@ -104,10 +104,12 @@ defmodule Upyun do
   Returns `:ok` if successful.
   """
   def upload(policy, local_path, remote_path, opts \\ %{}) do
-    unless Map.has_key?(opts, :headers) do
-      opts = Map.put(opts, :headers, %{
-        "Content-Type" => MIME.from_path(local_path)
-      })
+    opts = case Map.get(opts, :headers) do
+      true -> opts
+      _ ->
+        Map.put(opts, :headers, %{
+          "Content-Type" => MIME.from_path(local_path)
+        })
     end
     put(policy, File.read!(local_path), remote_path, opts)
   end
@@ -118,11 +120,14 @@ defmodule Upyun do
 
   Returns `:ok` if successful.
   """
+  @default_upload_timeout 120000
   def put(policy, content, path, opts \\ %{}) do
-    hds = headers(policy) |> Map.merge(opts[:headers] || %{})
+    hds     = headers(policy) |> Map.merge(opts[:headers] || %{})
+    timeout = Dict.get(opts, :timeout, @default_upload_timeout)
+
     %{ status_code: 200 } = policy
       |> to_url(path)
-      |> HTTPoison.put!(content, hds)
+      |> HTTPoison.put!(content, hds, recv_timeout: timeout)
 
     :ok
   end
@@ -134,7 +139,7 @@ defmodule Upyun do
   TODO: upload parallelly
   """
   def upload_dir(policy, local_dir, remote_path, opts \\ %{}) do
-    files = local_dir
+    local_dir
     |> Path.join("**")
     |> Path.wildcard
     |> Enum.each(
