@@ -14,7 +14,7 @@ defmodule Upyun.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison]]
+    [applications: [:logger, :httpoison, :mime]]
   end
 
   # Dependencies can be Hex packages:
@@ -29,7 +29,8 @@ defmodule Upyun.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.9.0"},
-      {:poison, "~> 2.2"}
+      {:poison, "~> 2.2"},
+      {:mime, "~> 1.0"}
     ]
   end
 end

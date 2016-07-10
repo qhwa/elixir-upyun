@@ -104,6 +104,11 @@ defmodule Upyun do
   Returns `:ok` if successful.
   """
   def upload(policy, local_path, remote_path, opts \\ %{}) do
+    unless Map.has_key?(opts, :headers) do
+      opts = Map.put(opts, :headers, %{
+        "Content-Type" => MIME.from_path(local_path)
+      })
+    end
     put(policy, File.read!(local_path), remote_path, opts)
   end
 
@@ -120,6 +125,24 @@ defmodule Upyun do
       |> HTTPoison.put!(content, hds)
 
     :ok
+  end
+
+
+  @doc """
+  Upload all files recursively in local directory to remote.
+  Thery are uploaded one by one currently.
+  TODO: upload parallelly
+  """
+  def upload_dir(policy, local_dir, remote_path, opts \\ %{}) do
+    files = local_dir
+    |> Path.join("**")
+    |> Path.wildcard
+    |> Enum.each(
+      fn (file) ->
+        local = Path.relative_to(Path.expand(file), Path.expand(local_dir))
+        upload(policy, file, Path.join(remote_path, local), opts)
+      end
+    )
   end
 
 

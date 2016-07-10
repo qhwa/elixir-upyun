@@ -41,9 +41,15 @@ defmodule UpyunTest do
     Upyun.delete(policy, "/README.md")
     Upyun.delete(policy, "/README2.md")
     Upyun.delete(policy, "/test/readme/README.md")
+    Upyun.delete(policy, "/elixir-test/test/upyun_test.exs")
+    Upyun.delete(policy, "/elixir-test/test/test_helper.exs")
   end
 
   defp policy do
     %Upyun{ bucket: @bucket, operator: @operator, password: @password }
+  end
+
+  test ".upload_dir" do
+    Upyun.upload_dir(policy, "./test", "/elixir-test/test")
   end
 end
