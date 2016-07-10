@@ -12,27 +12,27 @@ defmodule UpyunTest do
     assert is_list(list)
   end
 
-  test ".put" do
-    assert Upyun.put(policy, "README.md", "/README.md") == :ok
+  test ".upload" do
+    assert Upyun.upload(policy, "README.md", "/README.md") == :ok
   end
 
-  test ".put_body" do
-    assert Upyun.put_body(policy, "Hello", "/README.md") == :ok
+  test ".put" do
+    assert Upyun.put(policy, "Hello", "/README.md") == :ok
   end
 
   test ".put with custom headers" do
-    assert Upyun.put_body(policy, "hello", "/README2.md", headers: %{
+    assert Upyun.put(policy, "hello", "/README2.md", headers: %{
       "Content-Type" => "text/plain"
     }) == :ok
   end
 
   test ".put with non-existing path" do
-    assert Upyun.put_body(policy, "hello", "/test/readme/README.md") == :ok
+    assert Upyun.put(policy, "hello", "/test/readme/README.md") == :ok
     {:file, 5, _} = Upyun.info(policy, "/test/readme/README.md")
   end
 
   test ".info" do
-    assert Upyun.put_body(policy, "hello", "/README.md") == :ok
+    assert Upyun.put(policy, "hello", "/README.md") == :ok
     {:file, 5, _} = Upyun.info(policy, "/README.md")
     {:dir, 0, _}  = Upyun.info(policy, "/empty_dir")
   end

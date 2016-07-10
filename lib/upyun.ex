@@ -103,8 +103,8 @@ defmodule Upyun do
 
   Returns `:ok` if successful.
   """
-  def put(policy, local_path, remote_path, opts \\ %{}) do
-    put_body(policy, File.read!(local_path), remote_path, opts)
+  def upload(policy, local_path, remote_path, opts \\ %{}) do
+    put(policy, File.read!(local_path), remote_path, opts)
   end
 
 
@@ -113,7 +113,7 @@ defmodule Upyun do
 
   Returns `:ok` if successful.
   """
-  def put_body(policy, content, path, opts \\ %{}) do
+  def put(policy, content, path, opts \\ %{}) do
     hds = headers(policy) |> Map.merge(opts[:headers] || %{})
     %{ status_code: 200 } = policy
       |> to_url(path)
