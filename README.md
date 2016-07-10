@@ -2,6 +2,8 @@
 
 Upyun client for Elixir.
 
+warning: This is an unofficial and under development SDK. APIs may change frequently. Do NOT use it in your production.
+
 ## Installation
 
 The package can be installed as:
