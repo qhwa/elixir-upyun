@@ -104,10 +104,10 @@ defmodule Upyun do
   Returns `:ok` if successful.
   """
   def upload(policy, local_path, remote_path, opts \\ %{}) do
-    opts = case Map.get(opts, :headers) do
+    opts = case Dict.has_key?(opts, :headers) do
       true -> opts
       _ ->
-        Map.put(opts, :headers, %{
+        Dict.put(opts, :headers, %{
           "Content-Type" => MIME.from_path(local_path)
         })
     end
@@ -122,7 +122,7 @@ defmodule Upyun do
   """
   @default_upload_timeout 120000
   def put(policy, content, path, opts \\ %{}) do
-    hds     = headers(policy) |> Map.merge(opts[:headers] || %{})
+    hds     = headers(policy) |> Dict.merge(opts[:headers] || %{})
     timeout = Dict.get(opts, :timeout, @default_upload_timeout)
 
     %{ status_code: 200 } = policy

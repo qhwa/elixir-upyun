@@ -16,6 +16,18 @@ defmodule UpyunTest do
     assert Upyun.upload(policy, "README.md", "/README.md") == :ok
   end
 
+  test ".upload with custom keyword list headers" do
+    assert Upyun.upload(policy, "README.md", "/README.md", headers: %{
+      "Content-Type" => "text/plain"
+    }) == :ok
+  end
+
+  test ".upload with custom map headers" do
+    assert Upyun.upload(policy, "README.md", "/README.md", %{ headers: %{
+      "Content-Type" => "text/plain"
+    }}) == :ok
+  end
+
   test ".put" do
     assert Upyun.put(policy, "Hello", "/README.md") == :ok
   end
