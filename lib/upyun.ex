@@ -81,20 +81,33 @@ defmodule Upyun do
     headers = resp.headers
       |> Enum.map(fn({k, v}) -> { String.to_atom(k), v } end)
 
-    type = case headers[:"x-upyun-file-type"] do
+    {
+      parse_upyun_file_type(headers),
+      parse_upyun_file_size(headers),
+      parse_upyun_file_date(headers)
+    }
+  end
+
+
+  defp parse_upyun_file_type(headers) do
+    case headers[:"x-upyun-file-type"] do
       "file"   -> :file
       "folder" -> :dir
       _        -> :unkown
     end
+  end
 
-    size = case headers[:"x-upyun-file-size"] do
+
+  defp parse_upyun_file_size(headers) do
+    case headers[:"x-upyun-file-size"] do
       num when is_binary(num) -> String.to_integer(num)
       _ -> 0
     end
+  end
 
-    date = String.to_integer(headers[:"x-upyun-file-date"])
 
-    { type, size, date }
+  defp parse_upyun_file_date(headers) do
+    String.to_integer(headers[:"x-upyun-file-date"])
   end
 
 
@@ -104,14 +117,17 @@ defmodule Upyun do
   Returns `:ok` if successful.
   """
   def upload(policy, local_path, remote_path, opts \\ %{}) do
-    opts = case Dict.has_key?(opts, :headers) do
-      true -> opts
-      _ ->
-        Dict.put(opts, :headers, %{
-          "Content-Type" => MIME.from_path(local_path)
-        })
-    end
-    put(policy, File.read!(local_path), remote_path, opts)
+    opts = opts
+      |> Map.put_new(
+        :headers,
+        %{"Content-Type" => MIME.from_path(local_path)}
+      )
+    put(
+      policy,
+      File.read!(local_path),
+      remote_path,
+      opts
+    )
   end
 
 
@@ -122,8 +138,8 @@ defmodule Upyun do
   """
   @default_upload_timeout 120000
   def put(policy, content, path, opts \\ %{}) do
-    hds     = headers(policy) |> Dict.merge(opts[:headers] || %{})
-    timeout = Dict.get(opts, :timeout, @default_upload_timeout)
+    hds     = headers(policy) |> Map.merge(opts[:headers] || %{})
+    timeout = Map.get(opts, :timeout, @default_upload_timeout)
 
     %{ status_code: 200 } = policy
       |> to_url(path)
