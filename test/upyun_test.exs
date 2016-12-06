@@ -7,24 +7,24 @@ defmodule UpyunTest do
   @operator "travisci"
   @password "testtest"
 
-  # @bucket   "hlj-img"
-  # @operator System.get_env("UPYUN_OPERATOR")
-  # @password System.get_env("UPYUN_PASSWORD")
+  #@bucket   "hlj-img"
+  #@operator System.get_env("UPYUN_OPERATOR")
+  #@password System.get_env("UPYUN_PASSWORD")
 
   @prefix   "/upload/test/elixir-upyun"
 
   setup do
     policy = %Upyun{ bucket: @bucket, operator: @operator, password: @password }
 
+    # avoid "too many requests of the same uri"
+    n = :rand.uniform(10000)
+    path = @prefix <> "/README-#{n}.md"
+
     on_exit fn ->
-      Upyun.delete(policy, "#{@prefix}/README.md")
-      Upyun.delete(policy, "#{@prefix}/README2.md")
-      Upyun.delete(policy, "#{@prefix}/test/readme/README.md")
-      Upyun.delete(policy, "#{@prefix}/test/upyun_test.exs")
-      Upyun.delete(policy, "#{@prefix}/test/test_helper.exs")
+      Upyun.delete(policy, path)
     end
 
-    {:ok, %{policy: policy}}
+    {:ok, %{policy: policy, path: path}}
   end
 
 
@@ -34,40 +34,43 @@ defmodule UpyunTest do
   end
 
 
-  test ".upload", %{policy: policy} do
-    assert Upyun.upload(policy, "README.md", "#{@prefix}/README.md") == :ok
+  test ".upload", %{policy: policy, path: path} do
+    assert Upyun.upload(policy, "README.md", path) == :ok
   end
 
 
-  test ".upload with custom keyword list headers", %{policy: policy} do
-    assert Upyun.upload(policy, "README.md", "#{@prefix}/README.md", headers: %{
+  test ".upload with custom keyword list headers", %{policy: policy, path: path} do
+    assert Upyun.upload(policy, "README.md", path, headers: %{
       "Content-Type" => "text/plain"
     }) == :ok
   end
 
 
-  test ".put", %{policy: policy} do
-    assert Upyun.put(policy, "Hello", "#{@prefix}/README.md") == :ok
+  test ".put", %{policy: policy, path: path} do
+    assert Upyun.put(policy, "Hello", path) == :ok
   end
 
 
-  test ".put with custom headers", %{policy: policy} do
-    assert Upyun.put(policy, "hello", "#{@prefix}/README2.md", headers: %{
+  test ".put with custom headers", %{policy: policy, path: path} do
+    assert Upyun.put(policy, "hello", path, headers: %{
       "Content-Type" => "text/plain"
     }) == :ok
   end
 
 
-  test ".put with non-existing path", %{policy: policy} do
-    assert Upyun.put(policy, "hello", "#{@prefix}/test/readme/README.md") == :ok
-    {:file, 5, _} = Upyun.info(policy, "#{@prefix}/test/readme/README.md")
+  test ".put with non-existing path", %{policy: policy, path: path} do
+    assert Upyun.put(policy, "hello", path) == :ok
+    {:file, 5, _} = Upyun.info(policy, path)
   end
 
 
-  test ".info", %{policy: policy} do
-    assert Upyun.put(policy, "hello", "#{@prefix}/README.md") == :ok
-    {:file, 5, _} = Upyun.info(policy, "#{@prefix}/README.md")
-    {:dir, 0, _}  = Upyun.info(policy, "#{@prefix}/empty_dir")
+  # This test needs to be reviewed.
+  @tag need_inspect: true
+  test ".info", %{policy: policy, path: path} do
+    assert Upyun.put(policy, "hello", path) == :ok
+    {:file, 5, _} = Upyun.info(policy, path)
+    {:dir, 0, _}  = Upyun.info(policy, "/")
+    {:error, :not_found}  = Upyun.info(policy, "#{@prefix}/empty_dir")
   end
 
 

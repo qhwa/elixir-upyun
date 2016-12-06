@@ -60,7 +60,7 @@ defmodule Upyun do
 
   ### Examples
 
-  for file: `Upyun.info(policy, "hehe.txt")  #=> { :file, 0, 1448958896 }`
+  for file: `Upyun.info(policy, "hehe.txt")  #=> { :file, 150, 1448958896 }`
   for folder: `Upyun.info(policy, "empty_dir")  #=> { :dir, 0, 1448958896 }`
 
   """
@@ -79,7 +79,10 @@ defmodule Upyun do
 
   defp parse_info(resp) do
     headers = resp.headers
-      |> Enum.map(fn({k, v}) -> { String.to_atom(k), v } end)
+      |> Enum.into(%{}, fn({k, v}) -> {
+        k |> String.downcase |> String.to_atom,
+        v
+      } end)
 
     {
       parse_upyun_file_type(headers),
@@ -89,25 +92,38 @@ defmodule Upyun do
   end
 
 
-  defp parse_upyun_file_type(headers) do
-    case headers[:"x-upyun-file-type"] do
-      "file"   -> :file
-      "folder" -> :dir
-      _        -> :unkown
-    end
+  defp parse_upyun_file_type(%{:"x-upyun-file-type" => "file"}) do
+    :file
   end
 
 
-  defp parse_upyun_file_size(headers) do
-    case headers[:"x-upyun-file-size"] do
-      num when is_binary(num) -> String.to_integer(num)
-      _ -> 0
-    end
+  defp parse_upyun_file_type(%{:"x-upyun-file-type" => "folder"}) do
+    :dir
   end
 
 
-  defp parse_upyun_file_date(headers) do
-    String.to_integer(headers[:"x-upyun-file-date"])
+  defp parse_upyun_file_type(_) do
+    :unknown
+  end
+
+
+  defp parse_upyun_file_size(%{:"x-upyun-file-size" => num}) when is_binary(num) do
+    String.to_integer(num)
+  end
+
+
+  defp parse_upyun_file_size(_) do
+    0
+  end
+
+
+  defp parse_upyun_file_date(%{:"x-upyun-file-date" => date}) do
+    String.to_integer(date)
+  end
+
+
+  defp parse_upyun_file_date(_) do
+    nil
   end
 
 
