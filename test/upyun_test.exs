@@ -7,61 +7,78 @@ defmodule UpyunTest do
   @operator "travisci"
   @password "testtest"
 
-  test "list objects" do
+  # @bucket   "hlj-img"
+  # @operator System.get_env("UPYUN_OPERATOR")
+  # @password System.get_env("UPYUN_PASSWORD")
+
+  @prefix   "/upload/test/elixir-upyun"
+
+  setup do
+    policy = %Upyun{ bucket: @bucket, operator: @operator, password: @password }
+
+    on_exit fn ->
+      Upyun.delete(policy, "#{@prefix}/README.md")
+      Upyun.delete(policy, "#{@prefix}/README2.md")
+      Upyun.delete(policy, "#{@prefix}/test/readme/README.md")
+      Upyun.delete(policy, "#{@prefix}/test/upyun_test.exs")
+      Upyun.delete(policy, "#{@prefix}/test/test_helper.exs")
+    end
+
+    {:ok, %{policy: policy}}
+  end
+
+
+  test "list objects", %{policy: policy} do
     {:ok, list} = Upyun.list(policy)
     assert is_list(list)
   end
 
-  test ".upload" do
-    assert Upyun.upload(policy, "README.md", "/README.md") == :ok
+
+  test ".upload", %{policy: policy} do
+    assert Upyun.upload(policy, "README.md", "#{@prefix}/README.md") == :ok
   end
 
-  test ".upload with custom keyword list headers" do
-    assert Upyun.upload(policy, "README.md", "/README.md", headers: %{
+
+  test ".upload with custom keyword list headers", %{policy: policy} do
+    assert Upyun.upload(policy, "README.md", "#{@prefix}/README.md", headers: %{
       "Content-Type" => "text/plain"
     }) == :ok
   end
 
-  test ".upload with custom map headers" do
-    assert Upyun.upload(policy, "README.md", "/README.md", %{ headers: %{
-      "Content-Type" => "text/plain"
-    }}) == :ok
+
+  test ".put", %{policy: policy} do
+    assert Upyun.put(policy, "Hello", "#{@prefix}/README.md") == :ok
   end
 
-  test ".put" do
-    assert Upyun.put(policy, "Hello", "/README.md") == :ok
-  end
 
-  test ".put with custom headers" do
-    assert Upyun.put(policy, "hello", "/README2.md", headers: %{
+  test ".put with custom headers", %{policy: policy} do
+    assert Upyun.put(policy, "hello", "#{@prefix}/README2.md", headers: %{
       "Content-Type" => "text/plain"
     }) == :ok
   end
 
-  test ".put with non-existing path" do
-    assert Upyun.put(policy, "hello", "/test/readme/README.md") == :ok
-    {:file, 5, _} = Upyun.info(policy, "/test/readme/README.md")
+
+  test ".put with non-existing path", %{policy: policy} do
+    assert Upyun.put(policy, "hello", "#{@prefix}/test/readme/README.md") == :ok
+    {:file, 5, _} = Upyun.info(policy, "#{@prefix}/test/readme/README.md")
   end
 
-  test ".info" do
-    assert Upyun.put(policy, "hello", "/README.md") == :ok
-    {:file, 5, _} = Upyun.info(policy, "/README.md")
-    {:dir, 0, _}  = Upyun.info(policy, "/empty_dir")
+
+  test ".info", %{policy: policy} do
+    assert Upyun.put(policy, "hello", "#{@prefix}/README.md") == :ok
+    {:file, 5, _} = Upyun.info(policy, "#{@prefix}/README.md")
+    {:dir, 0, _}  = Upyun.info(policy, "#{@prefix}/empty_dir")
   end
 
-  test ".delete" do
-    Upyun.delete(policy, "/README.md")
-    Upyun.delete(policy, "/README2.md")
-    Upyun.delete(policy, "/test/readme/README.md")
-    Upyun.delete(policy, "/elixir-test/test/upyun_test.exs")
-    Upyun.delete(policy, "/elixir-test/test/test_helper.exs")
+
+  test ".delete", %{policy: _policy} do
+    # already tested deleting in setup
   end
 
-  defp policy do
-    %Upyun{ bucket: @bucket, operator: @operator, password: @password }
+
+  test ".upload_dir", %{policy: policy} do
+    Upyun.upload_dir(policy, "./test", "#{@prefix}/elixir-test/test")
   end
 
-  test ".upload_dir" do
-    Upyun.upload_dir(policy, "./test", "/elixir-test/test")
-  end
+
 end
