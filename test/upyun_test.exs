@@ -7,10 +7,6 @@ defmodule UpyunTest do
   @operator "travisci"
   @password "testtest"
 
-  #@bucket   "hlj-img"
-  #@operator System.get_env("UPYUN_OPERATOR")
-  #@password System.get_env("UPYUN_PASSWORD")
-
   @prefix   "/upload/test/elixir-upyun"
 
   setup do
