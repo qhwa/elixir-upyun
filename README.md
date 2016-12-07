@@ -1,5 +1,7 @@
 # ElixirUpyun
 
+![codeclimate](https://codeclimate.com/github/qhwa/elixir-upyun/badges/gpa.svg)
+
 Unofficial Upyun client for Elixir.
 
 warning: This is an unofficial and under development SDK. APIs may change frequently. Do NOT use it in your production.
