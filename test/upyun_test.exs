@@ -80,4 +80,10 @@ defmodule UpyunTest do
   end
 
 
+  test ".get", %{policy: policy, path: path} do
+    Upyun.put(policy, "Happy~", path)
+    assert Upyun.get(policy, path) == "Happy~"
+  end
+
+
 end

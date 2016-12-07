@@ -202,6 +202,19 @@ defmodule Upyun do
     end
   end
 
+
+  @doc """
+  Get the content of remote file.
+
+  Return the raw content string of the file.
+  """
+  def get(policy, path) do
+    resp = policy
+      |> to_url(path)
+      |> HTTPoison.get!(headers(policy))
+      |> get_raw_content
+  end
+
   ## helpers
 
   defp headers(policy) do
@@ -250,6 +263,21 @@ defmodule Upyun do
     d = d |> Integer.to_string |> String.rjust(2, ?0)
 
     "#{day_name}, #{d} #{month_name} #{year} #{h}:#{m}:#{s} GMT"
+  end
+
+
+  defp get_raw_content(%HTTPoison.Response{status_code: 200, body: body}) do
+    body
+  end
+
+  
+  defp get_raw_content(%HTTPoison.Response{status_code: 404}) do
+    {:error, :file_not_found}
+  end
+
+
+  defp get_raw_content(%{body: body}) do
+    {:error, body}
   end
 
 end

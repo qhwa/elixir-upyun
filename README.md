@@ -47,6 +47,10 @@ policy |> Upyun.put(
   "/path/to/remote/file"
 )
 
+# get content of the remote file
+policy |> Upyun.get("/path/to/remote/file")
+#=> "THIS IS THE CONTENT OF THE FILE"
+
 # upload a dir recursively
 policy |> Upyun.upload_dir("/path/to/local/dir", "/path/to/remote/dir")
 
