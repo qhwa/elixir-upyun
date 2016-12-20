@@ -1,6 +1,6 @@
 # ElixirUpyun
 
-![codeclimate](https://codeclimate.com/github/qhwa/elixir-upyun/badges/gpa.svg)
+[![inch_doc_status](http://inch-ci.org/github/qhwa/elixir-upyun.svg?branch=v0.2-dev)](http://inch-ci.org/github/qhwa/elixir-upyun/suggestions)
 
 Unofficial Upyun client for Elixir.
 
