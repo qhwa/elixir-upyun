@@ -55,16 +55,16 @@ defmodule Upyun do
 
     case resp.status_code do
       200 ->
-        { :ok, parse_list(resp.body) }
+        {:ok, parse_list(resp.body)}
       _ ->
-        { :error, resp.body }
+        {:error, resp.body}
     end
 
   end
 
 
   defp to_url(policy, path) do
-    %{ bucket: bucket, endpoint: endpoint } = policy
+    %{bucket: bucket, endpoint: endpoint} = policy
     "https://#{endpoint}.api.upyun.com/#{bucket}#{path}"
   end
 
@@ -97,11 +97,11 @@ defmodule Upyun do
   ```elixir
   # for file:
   policy |> Upyun.info("hehe.txt")
-  #=> { :file, 150, 1448958896 }
+  #=> {:file, 150, 1448958896}
 
   # for folder:
   policy |> Upyun.info("empty_dir")
-  #=> { :dir, 0, 1448958896 }`
+  #=> {:dir, 0, 1448958896}`
   ```
   """
   @spec info(policy, binary) :: info | {:error, :not_found} | {:error, any}
@@ -112,8 +112,8 @@ defmodule Upyun do
 
     case resp.status_code do
       200 -> parse_info(resp)
-      404 -> { :error, :not_found }
-      _   -> { :error, resp.body }
+      404 -> {:error, :not_found}
+      _   -> {:error, resp.body}
     end
   end
 
@@ -239,13 +239,13 @@ defmodule Upyun do
   #=> :ok
   ```
   """
-  @default_upload_timeout 120000
+  @default_upload_timeout 120_000
   @spec put(policy, binary, binary, [any]) :: :ok
   def put(policy, content, path, opts \\ []) do
     hds = headers(policy, opts)
     timeout = Keyword.get(opts, :timeout, @default_upload_timeout)
 
-    %{ status_code: 200 } = policy
+    %{status_code: 200} = policy
       |> to_url(path)
       |> HTTPoison.put!(content, hds, recv_timeout: timeout)
 
@@ -313,7 +313,7 @@ defmodule Upyun do
     case resp.status_code do
       200 -> :ok
       404 -> :ok
-      _ -> { :error, resp.body }
+      _ -> {:error, resp.body}
     end
   end
 
@@ -357,7 +357,7 @@ defmodule Upyun do
   end
 
   defp headers(policy, opts) do
-    %{ operator: op, password: pw } = policy
+    %{operator: op, password: pw} = policy
     defaults = [
       {:"Accpet"        , "application/json"},
       {:"Authorization" , "Basic #{sign(op, pw)}"},
@@ -375,20 +375,20 @@ defmodule Upyun do
   end
 
   defp time do
-    {date, {h, m, s}}  = :calendar.universal_time
-    { year, month, d } = date
+    {date, {h, m, s}} = :calendar.universal_time
+    {year, month, d}  = date
 
     month_name = ~w[Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec]
                   |> Enum.at(month - 1)
     day_name   = ~w[Mon Tue Wed Thu Fri Sat Sun]
                   |> Enum.at(:calendar.day_of_the_week(date) - 1)
 
-    h = h |> Integer.to_string |> String.rjust(2, ?0)
-    m = m |> Integer.to_string |> String.rjust(2, ?0)
-    s = s |> Integer.to_string |> String.rjust(2, ?0)
-    d = d |> Integer.to_string |> String.rjust(2, ?0)
+    "#{day_name}, #{d} #{month_name} #{year} #{pad h}:#{pad m}:#{pad s} GMT"
+  end
 
-    "#{day_name}, #{d} #{month_name} #{year} #{h}:#{m}:#{s} GMT"
+
+  defp pad(n) do
+    n |> Integer.to_string |> String.rjust(2, ?0)
   end
 
 
