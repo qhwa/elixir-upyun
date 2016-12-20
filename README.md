@@ -6,6 +6,8 @@ Unofficial Upyun client for Elixir.
 
 warning: This is an unofficial and under development SDK. APIs may change frequently. Do NOT use it in your production.
 
+[online documents](https://hexdocs.pm/hlj_upyun/Upyun.html)
+
 ## Installation
 
 The package can be installed as:
@@ -59,8 +61,6 @@ policy |> Upyun.upload_dir("/path/to/local/dir", "/path/to/remote/dir")
 # delete an object of remote
 policy |> Upyun.delete("/path/to/remote/object")
 ```
-
-[more documents](https://hexdocs.pm/hlj_upyun/Upyun.html)
 
 ## License
 MIT
