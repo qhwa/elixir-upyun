@@ -17,7 +17,7 @@ The package can be installed as:
 
     ```elixir
     def deps do
-      [{:upyun, "~> 0.1"}]
+      [{:hlj_upyun, "~> 0.1"}]
     end
     ```
 
