@@ -14,7 +14,7 @@ The package can be installed as:
 
     ```elixir
     def deps do
-      [{:upyun, github: "qhwa/elixir-upyun"}]
+      [{:upyun, "~> 0.1"}]
     end
     ```
 
@@ -60,4 +60,10 @@ policy |> Upyun.upload_dir("/path/to/local/dir", "/path/to/remote/dir")
 policy |> Upyun.delete("/path/to/remote/object")
 ```
 
+[more documents](https://hexdocs.pm/hlj_upyun/Upyun.html)
 
+## License
+MIT
+
+
+Feel free to [fork](https://github.com/qhwa/elixir-upyun) or submit [issues](https://github.com/qhwa/elixir-upyun/issues).

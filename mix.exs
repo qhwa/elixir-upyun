@@ -1,13 +1,21 @@
 defmodule Upyun.Mixfile do
   use Mix.Project
 
+  @description """
+  A community version of Upyun SDK, released by Helijia.com.
+  """
+
   def project do
-    [app: :upyun,
-     version: "0.1.0",
-     elixir: "~> 1.3",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps()]
+    [
+      app: :hlj_upyun,
+      version: "0.1.0",
+      elixir: "~> 1.3",
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      deps: deps(),
+      description: @description,
+      package: package()
+    ]
   end
 
   # Configuration for the OTP application
@@ -34,6 +42,15 @@ defmodule Upyun.Mixfile do
       {:credo, ">= 0.0.0", only: :dev},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:inch_ex, ">= 0.0.0", only: :docs}
+    ]
+  end
+
+
+  defp package do
+    [
+      maintainers: ["qhwa"],
+      licenses: ["MIT"],
+      links: %{"Github" => "https://github.com/qhwa/elixir-upyun"}
     ]
   end
 end
