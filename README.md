@@ -1,5 +1,6 @@
 # ElixirUpyun
 
+[![travis-status](https://travis-ci.org/qhwa/exhtml.svg?branch=master)](https://travis-ci.org/qhwa/exhtml)
 [![inch_doc_status](http://inch-ci.org/github/qhwa/elixir-upyun.svg?branch=master)](http://inch-ci.org/github/qhwa/elixir-upyun/suggestions)
 
 Unofficial Upyun client for Elixir.
