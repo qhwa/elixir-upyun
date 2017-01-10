@@ -364,9 +364,11 @@ defmodule Upyun do
       {:"Date"          , time()}
     ]
 
+    hds = Enum.map(opts[:headers] || [], fn {k, v} -> {:"#{k}", v} end)
+
     Keyword.merge(
       defaults,
-      opts[:headers] || []
+      hds
     )
   end
 
@@ -407,3 +409,4 @@ defmodule Upyun do
   end
 
 end
+
