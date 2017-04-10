@@ -278,7 +278,7 @@ defmodule Upyun do
     local_dir
     |> Path.join("**")
     |> Path.wildcard
-    |> Enum.filter(&(!File.dir?(&1)))
+    |> Enum.reject(&File.dir?/1)
     |> Enum.each(
       fn (file) ->
         local = file
