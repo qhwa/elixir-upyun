@@ -37,7 +37,7 @@ defmodule Upyun.Mixfile do
   defp deps do
     [
       {:httpoison, ">= 0.9.0"},
-      {:poison, "~> 2.2"},
+      {:poison, ">= 2.2.0"},
       {:mime, "~> 1.0"},
       {:credo, ">= 0.0.0", only: :dev},
       {:ex_doc, ">= 0.0.0", only: :dev},
