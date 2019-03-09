@@ -245,11 +245,12 @@ defmodule Upyun do
     hds = headers(policy, opts)
     timeout = Keyword.get(opts, :timeout, @default_upload_timeout)
 
-    %{status_code: 200} = policy
-      |> to_url(path)
-      |> HTTPoison.put!(content, hds, recv_timeout: timeout)
-
-    :ok
+    res = policy |> to_url(path) |> HTTPoison.put!(content, hds, recv_timeout: timeout)
+    case res do
+      %{status_code: 200} -> :ok
+      %{status_code: 429, request_url: url} -> {:already_exists, url}
+      %{body: body} -> {:error, body}
+    end
   end
 
 
